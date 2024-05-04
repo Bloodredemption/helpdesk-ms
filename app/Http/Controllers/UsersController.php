@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Department;
 
 class UsersController extends Controller
 {
@@ -13,7 +14,9 @@ class UsersController extends Controller
     public function index()
     {
         $users = User::paginate(10);
-        return view('admin.users.index', ['users' => $users]);
+        $departments = Department::all();
+
+        return view('admin.users.index', ['users' => $users, 'departments' => $departments]);
     }
 
     /**
@@ -34,6 +37,7 @@ class UsersController extends Controller
             'name' => 'required|string|max:255',
             'sex' => 'required|in:male,female,other',
             'userType' => 'required|in:user,admin',
+            'userDept' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
         ]);
@@ -43,6 +47,7 @@ class UsersController extends Controller
         $user->name = $request->name;
         $user->sex = $request->sex;
         $user->usertype = $request->userType;
+        $user->dept_id = $request->userDept;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
 

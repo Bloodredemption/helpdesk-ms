@@ -12,7 +12,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::paginate(10); // Change 10 to the number of items per page you want to display
+        $departments = Department::paginate(10);
         return view('admin.departments.index', ['departments' => $departments]);
     }
 

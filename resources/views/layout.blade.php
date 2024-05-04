@@ -9,6 +9,12 @@
         Dashboard
     @elseif(request()->is('departments'))
         Departments
+    @elseif(request()->is('users'))
+        Users
+    @elseif(request()->is('tickets'))
+        Tickets
+    @elseif(request()->is('transactionlogs'))
+        Logs
     @else
         Helpdesk Management System
     @endif

@@ -33,9 +33,13 @@ Route::get('/dashboard', function () {
     return view('admin.dashboard');
 });
 
-// Route::get('/departments', function () {
-//     return view('admin.departments');
-// });
+Route::get('/tickets', function () {
+    return view('admin.tickets.index');
+});
+
+Route::get('/transactionlogs', function () {
+    return view('admin.logs.index');
+});
 
 Route::post('/register', [RegisterController::class, 'register'])->name('register');
 Route::post('/login', [LoginController::class, 'login'])->name('login');
@@ -48,3 +52,5 @@ Route::resource('departments', DepartmentController::class);
 
 Route::resource('users', UsersController::class);
 Route::post('/updateusers', [UsersController::class, 'update'])->name('users.update');
+
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

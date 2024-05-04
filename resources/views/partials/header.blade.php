@@ -16,6 +16,10 @@
                 System / <a href="/departments">Departments</a>
             @elseif(request()->is('users'))
                 System / <a href="/users">Users</a>
+            @elseif(request()->is('tickets'))
+                System / <a href="/tickets">tickets</a>
+            @elseif(request()->is('transactionlogs'))
+                System / <a href="/transactionlogs">Logs</a>
             @else
                 System / Default
             @endif
@@ -40,7 +44,14 @@
                   <p class="mb-0 fs-3">My Account</p>
                 </a>
 
-                <a href="./authentication-login.html" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                <!-- <a href="/logout" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a> -->
+                <a href="{{ route('logout') }}" class="btn btn-outline-primary mx-3 mt-2 d-block"
+                  onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                  Logout
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                  @csrf
+                </form>
               </div>
             </div>
           </li>

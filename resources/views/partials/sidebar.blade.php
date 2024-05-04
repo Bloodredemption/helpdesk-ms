@@ -25,7 +25,7 @@
             </a>
           </li>
           <li class="sidebar-item">
-              <a class="sidebar-link" href="./sample-page.html" aria-expanded="false">
+              <a class="sidebar-link {{ request()->is('tickets') ? 'active' : '' }}" href="/tickets" aria-expanded="false">
                 <span>
                   <i class="ti ti-ticket"></i>
                 </span>
@@ -49,7 +49,7 @@
             </a>
           </li>
           <li class="sidebar-item">
-              <a class="sidebar-link" href="./sample-page.html" aria-expanded="false">
+              <a class="sidebar-link {{ request()->is('transactionlogs') ? 'active' : '' }}" href="/transactionlogs" aria-expanded="false">
                 <span>
                   <i class="ti ti-file-info"></i>
                 </span>
