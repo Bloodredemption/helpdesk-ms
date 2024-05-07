@@ -82,7 +82,7 @@ class UsersController extends Controller
             'userName' => 'required|string|max:255',
             'userSex' => 'required|in:male,female,other',
             'usertype' => 'required|in:user,admin',
-            'userEmail' => 'required|email|unique:users,email',
+            'userEmail' => 'required|email',
             'userPassword' => 'required|min:6',
         ]);
 

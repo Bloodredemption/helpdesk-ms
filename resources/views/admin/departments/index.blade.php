@@ -103,6 +103,8 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- <script src="{{ asset('assets/libs/simplebar/dist/simplebar.js') }}"></script> -->
+
     <script>
         var deptID; // Define deptID as a global variable
         $(document).ready(function () {

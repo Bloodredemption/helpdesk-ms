@@ -20,15 +20,16 @@
                                 <th scope="col">Title</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Priority Level</th>
-                                <th scope="col">Email</th>
                                 <th scope="col">Date Issued</th>
-                                <th scope="col">Date Solved</th>
+                                <th scope="col">Issued by</th>
+                                <th scope="col">Assigned to</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
                             <tr>
-                                <td colspan="7" class="text-center">No data found</td>
+                                <td colspan="7" class="text-center">No data found.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -42,45 +43,37 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addDepartmentModalLabel">Add New User</h5>
+                    <h5 class="modal-title" id="addDepartmentModalLabel">Add New Ticket</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="{{ route('users.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" aria-describedby="textHelp" required>
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" aria-describedby="textHelp" required>
                         </div>
                         <div class="mb-3">
-                            <label for="sex" class="form-label">Sex</label>
-                            <select class="form-select" id="sex" name="sex" aria-describedby="selectHelp" required>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
+                            <label for="desc" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="desc" name="desc" aria-describedby="textHelp" required>
+                            <div id="emailHelp" class="form-text">Describe what you want to do.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="priorityLevel" class="form-label">Priority Level</label>
+                            <select class="form-select" id="priorityLevel" name="priorityLevel" aria-describedby="selectHelp" required>
+                                <option value="1">Normal</option>
+                                <option value="2">Mid</option>
+                                <option value="3">High</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="userType" class="form-label">User Type</label>
-                            <select class="form-select" id="userType" name="userType" aria-describedby="selectHelp" required>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
+                            <label for="priorityLevel" class="form-label">Assign User</label>
+                            <select class="form-select" id="priorityLevel" name="priorityLevel" aria-describedby="selectHelp" required>
+                                <option value="male">User 1</option>
+                                <option value="female">User 2</option>
+                                <option value="other">User 3</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" required>
-                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password_confirmation" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                        </div>
-                        <!-- Add more input fields if needed -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>

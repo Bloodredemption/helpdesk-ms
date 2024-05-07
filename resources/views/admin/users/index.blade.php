@@ -38,7 +38,7 @@
                                 <td>{{ $user->created_at }}</td>
                                 <td>{{ $user->updated_at }}</td>
                                 <td>
-                                    <a href="#" class="edit-department" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-sex="{{ $user->sex }}" data-user-email="{{ $user->email }}" data-user-type="{{ $user->usertype }}">
+                                    <a href="#" class="edit-department" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}" data-user-sex="{{ $user->sex }}" data-user-email="{{ $user->email }}" data-user-type="{{ $user->usertype }}" data-user-password="{{ $user->password }}">
                                         <i class="ti ti-edit"></i> Edit
                                     </a>
                                 </td>
@@ -180,6 +180,7 @@
                 var userSex = $(this).data('user-sex');
                 var userEmail = $(this).data('user-email');
                 var userType = $(this).data('user-type');
+                var userPass = $(this).data('user-password');
                 // console.log(userId);
 
                 // Assign value to the global variable userId
@@ -190,6 +191,7 @@
                 $('#userEmail').val(userEmail);
                 $('#usertype').val(userType);
                 $('#user_id').val(userId);
+                $('#userPassword').val(userPass);
             });
 
 
