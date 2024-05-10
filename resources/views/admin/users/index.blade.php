@@ -19,8 +19,7 @@
                             <tr>
                                 <th scope="col">Name</th>
                                 <th scope="col">Sex</th>
-                                <th scope="col">User Type</th>
-                                <th scope="col">Email</th>
+                                <th scope="col">Status</th>
                                 <th scope="col">Created At</th>
                                 <th scope="col">Updated At</th>
                                 <th scope="col">Actions</th>
@@ -30,11 +29,21 @@
                             @forelse($users as $user)
                             <tr>
                                 <td>
-                                    {{ $user->name }}
+                                    <b>{{ $user->name }}</b>
+                                    <div id="emailHelp" class="form-text">{{ $user->email }} | {{ $user->usertype }}</div>
                                 </td>
                                 <td>{{ $user->sex }}</td>
-                                <td>{{ $user->usertype }}</td>
-                                <td>{{ $user->email }}</td>
+                                <td>
+                                    @if($user->status == '1')
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-success rounded-3 fw-semibold">Active</span>
+                                        </div>
+                                    @elseif($user->status == '0')
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-danger rounded-3 fw-semibold">Inactive</span>
+                                        </div>
+                                    @endif
+                                </td>                                
                                 <td>{{ $user->created_at }}</td>
                                 <td>{{ $user->updated_at }}</td>
                                 <td>
