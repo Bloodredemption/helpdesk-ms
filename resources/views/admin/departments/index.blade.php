@@ -2,152 +2,190 @@
 
 @section('container-fluid')
     <div class="container-fluid">
-        <h5 class="card-title fw-semibold mb-2">Department List</h5>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="card-title fw-semibold mb-0">Department List</h5>
+            
+            {{-- <div class="d-inline-flex">
+                <div class="dropdown me-2">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="downloadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="ti ti-download"></i> Download as
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="downloadDropdown">
+                        <li><a class="dropdown-item" href="/download-pdf"><i class="ti ti-file-text"></i> PDF</a></li>
+                        <li><a class="dropdown-item" href="/download-pdf"><i class="ti ti-file-text"></i> Excel</a></li>
+                        <li><a class="dropdown-item" href="/download-pdf"><i class="ti ti-file-text"></i> Word Document</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="btn btn-primary me-2"><i class="ti ti-printer"></i> Print</a>
+            </div> --}}
+        </div>
         
-        @if(session('success'))
+        {{-- @if(session('success'))
             <div class="alert alert-success mb-2" role="alert">
                 {{ session('success') }}
             </div>
-        @endif
+        @endif --}}
 
         <div class="card">
             <div class="card-body">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDepartmentModal">Add New Department</button>
-                <div class="table-responsive mt-4">
-                    <table class="table  rounded">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-auto mb-3">
+                        <a class="btn btn-primary" href="{{ route('departments.create') }}">Add New Department</a>
+                    </div>
+                    <div class="col-auto mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-transparent border-0 text-muted">Filter</span>
+                            </div>
+                            <input type="text" class="form-control form-control-srch" id="userFilter" placeholder="Search ...">
+                            <div class="input-group-append">
+                                <a href="#" class="btn btn-outline-primary" id="filterButton"><i class="ti ti-search"></i></a>
+                            </div>
+                            <div class="input-group-append" style="display: none;" id="clearButtonWrapper">
+                                <a href="#" class="btn btn-outline-danger" id="clearButton"><i class="ti ti-x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive mt-2">
+                    <table id="example" class="table rounded">
                         <thead class="bg-primary text-white rounded-top">
                             <tr>
                                 <th scope="col">Name</th>
-                                <th scope="col">Created At</th>
-                                <th scope="col">Updated At</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date Created</th>
+                                <th scope="col">Date Updated</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <tr id="noDataFoundRow" style="display: none">
+                                <td colspan="5" class="text-center">No data found</td>
+                            </tr>
                             @forelse($departments as $department)
                             <tr>
-                                <td>{{ $department->name }}</td>
-                                <td>{{ $department->created_at }}</td>
-                                <td>{{ $department->updated_at }}</td>
                                 <td>
-                                    <a href="#" class="edit-department" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-department-id="{{ $department->id }}" data-department-name="{{ $department->name }}">
+                                    <a href="{{ route('departments.show', $department->id) }}" class="edit-department">
+                                        <b>{{ $department->name }}</b>
+                                    </a>
+                                </td>
+                                <td>
+                                    @if($department->status == '1')
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-success rounded-3 fw-semibold">Active</span>
+                                        </div>
+                                    @elseif($department->status == '0')
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-danger rounded-3 fw-semibold">Inactive</span>
+                                        </div>
+                                    @endif
+                                </td>   
+                                <td>{{ $department->created_at->format('F j, Y | h:i A') }}</td>
+                                <td>{{ $department->updated_at->format('F j, Y | h:i A') }}</td>
+                                <td>
+                                    <a href="{{ route('departments.edit', $department->id) }}" class="edit-department">
                                         <i class="ti ti-edit"></i> Edit
                                     </a>
+                                    {{-- <form id="delete-form" action="{{ route('departments.destroy', $department->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btnedit" onclick="confirmDelete()" style="color: red;" ><i class="ti ti-trash"></i> Remove</button>
+                                    </form> --}}
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="text-center">No data found</td>
+                                <td colspan="7" class="text-center">No data found</td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
-
                     {{ $departments->links() }}
-                    
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Add Department Modal -->
-    <div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addDepartmentModalLabel">Add New Department</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('departments.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="departmentName" class="form-label">Department Name</label>
-                            <input type="text" class="form-control" id="departmentName" name="departmentName" required>
-                        </div>
-                        <!-- Add more input fields if needed -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Department Modal -->
-    <div class="modal fade" id="editDepartmentModal" tabindex="-1" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editDepartmentModalLabel">Edit Department</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editDepartmentForm">
-                    @csrf
-                    <div class="modal-body">
-                        <input type="text" class="form-control" id="dept_id" name="dept_id" hidden>
-                        <div class="mb-3">
-                            <label for="departmentNameInput" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="departmentNameInput" name="departmentNameInput" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- <script src="{{ asset('assets/libs/simplebar/dist/simplebar.js') }}"></script> -->
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
     <script>
-        var deptID; // Define deptID as a global variable
-        $(document).ready(function () {
-            $('.edit-department').on('click', function () {
-                var departmentId = $(this).data('department-id');
-                var departmentName = $(this).data('department-name');
-                deptID = departmentId; // Assign value to the global variable deptID
-                $('#departmentNameInput').val(departmentName);
-                $('#dept_id').val(departmentId);
+        $(document).ready(function() {
+            $('#filterButton').on('click', function() {
+                var filterValue = $('#userFilter').val().toLowerCase();
+                var rows = $('#example tbody tr');
+                var noDataFoundRow = $('#noDataFoundRow');
+    
+                rows.hide(); // Hide all rows initially
+    
+                rows.filter(function() {
+                    return $(this).text().toLowerCase().indexOf(filterValue) > -1;
+                }).show();
+    
+                if ($('#example tbody tr:visible').length === 0) {
+                    noDataFoundRow.show(); // Show "No data found" row if no rows match filter
+                } else {
+                    noDataFoundRow.hide(); // Hide "No data found" row if there are matching rows
+                }
+    
+                $('#clearButtonWrapper').show(); // Show the clear button wrapper
             });
-
-            $('#editDepartmentForm').submit(function(e) {
-                e.preventDefault();
-                
-                var formData = $(this).serialize();
-                console.log(formData);
-
-                $.ajax({
-                    url: "/updatedepartments",
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        // Handle success response
-                        console.log(response);
-                        // Show SweetAlert notification
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: response.message, // Assuming the response contains a message key
-                            showConfirmButton: false,
-                            timer: 1500 // Display the notification for 1.5 seconds
-                        }).then(() => {
-                            // Reload the page
-                            window.location.reload();
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                    }
-                });
+    
+            $('#clearButton').on('click', function() {
+                $('#userFilter').val(''); // Clear the filter input
+                $('#example tbody tr').show(); // Show all table rows
+                $('#noDataFoundRow').hide(); // Hide "No data found" row
+                $('#clearButtonWrapper').hide(); // Hide the clear button wrapper
+            });
+    
+            // Show or hide clear button based on filter input value
+            $('#userFilter').on('input', function() {
+                var filterValue = $(this).val();
+                if (filterValue.trim() !== '') {
+                    $('#clearButtonWrapper').show();
+                } else {
+                    $('#clearButtonWrapper').hide();
+                }
             });
         });
     </script>
-    
+    <script>
+        function confirmDelete() {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#5D87FF',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form').submit();
+                }
+            });
+        }
+    </script>
+    @if(session('success'))
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        Toast.fire({
+            icon: "success",
+            title: "{{ session('success') }}"
+        });
+    </script>
+    @endif
 @endsection

@@ -12,8 +12,16 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            // Authentication passed...
-            return redirect()->intended('/dashboard');
+            $user = Auth::user();
+
+            session(['user_id' => Auth::id()]);
+            
+
+            if ($user->usertype == 'Admin') {
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->usertype == 'User') {
+                return redirect()->route('tickets.index');
+            }
         }
 
         // Authentication failed...

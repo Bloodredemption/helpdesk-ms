@@ -16,8 +16,9 @@
             <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
             <span class="hide-menu">Home</span>
           </li>
+          @if(auth()->user()->usertype === 'Admin')
           <li class="sidebar-item">
-            <a class="sidebar-link {{ request()->is('dashboard') ? 'active' : '' }}" href="/dashboard" aria-expanded="false">
+            <a class="sidebar-link {{ (str_starts_with(request()->path(), 'dashboard')) ? 'active' : '' }}" href="/dashboard" aria-expanded="false">
               <span>
                 <i class="ti ti-layout-dashboard"></i>
               </span>
@@ -25,23 +26,15 @@
             </a>
           </li>
           <li class="sidebar-item">
-              <a class="sidebar-link {{ request()->is('tickets') ? 'active' : '' }}" href="/tickets" aria-expanded="false">
-                <span>
-                  <i class="ti ti-ticket"></i>
-                </span>
-                <span class="hide-menu">Tickets</span>
-              </a>
+            <a class="sidebar-link {{ (str_starts_with(request()->path(), 'departments')) ? 'active' : '' }}" href="/departments" aria-expanded="false">
+              <span>
+                <i class="ti ti-link"></i>
+              </span>
+              <span class="hide-menu">Departments</span>
+            </a>
           </li>
           <li class="sidebar-item">
-              <a class="sidebar-link {{ request()->is('departments') ? 'active' : '' }}" href="/departments" aria-expanded="false">
-                <span>
-                  <i class="ti ti-link"></i>
-                </span>
-                <span class="hide-menu">Departments</span>
-              </a>
-          </li>
-          <li class="sidebar-item">
-            <a class="sidebar-link {{ request()->is('users') ? 'active' : '' }}" href="/users" aria-expanded="false">
+            <a class="sidebar-link {{ (str_starts_with(request()->path(), 'users')) ? 'active' : '' }}" href="/users" aria-expanded="false">
               <span>
                 <i class="ti ti-users"></i>
               </span>
@@ -49,13 +42,31 @@
             </a>
           </li>
           <li class="sidebar-item">
-              <a class="sidebar-link {{ request()->is('transactionlogs') ? 'active' : '' }}" href="/transactionlogs" aria-expanded="false">
-                <span>
-                  <i class="ti ti-file-info"></i>
-                </span>
-                <span class="hide-menu">Logs</span>
-              </a>
+            <a class="sidebar-link {{ (str_starts_with(request()->path(), 'logs')) ? 'active' : '' }}" href="/logs" aria-expanded="false">
+              <span>
+                <i class="ti ti-file-info"></i>
+              </span>
+              <span class="hide-menu">Logs</span>
+            </a>
           </li>
+          @elseif(auth()->user()->usertype === 'User')
+          <li class="sidebar-item">
+            <a class="sidebar-link {{ (str_starts_with(request()->path(), 'tickets')) ? 'active' : '' }}" href="/tickets" aria-expanded="false">
+              <span>
+                <i class="ti ti-ticket"></i>
+              </span>
+              <span class="hide-menu">My Tickets</span>
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link {{ (str_starts_with(request()->path(), 'assignedtickets')) ? 'active' : '' }}" href="/assignedtickets" aria-expanded="false">
+              <span>
+                <i class="ti ti-ticket"></i>
+              </span>
+              <span class="hide-menu">Assigned Tickets</span>
+            </a>
+          </li>
+          @endif
         </ul>
       </nav>
       <!-- End Sidebar navigation -->

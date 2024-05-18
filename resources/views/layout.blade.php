@@ -5,18 +5,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>
-    @if(request()->is('dashboard'))
-        Dashboard
-    @elseif(request()->is('departments'))
-        Departments
-    @elseif(request()->is('users'))
-        Users
-    @elseif(request()->is('tickets'))
-        Tickets
-    @elseif(request()->is('transactionlogs'))
-        Logs
+    @if(str_starts_with(request()->path(), 'dashboard'))
+    Dashboard
+    @elseif(str_starts_with(request()->path(), 'udashboard'))
+    User Dashboard
+    @elseif(str_starts_with(request()->path(), 'departments'))
+    Departments
+    @elseif(str_starts_with(request()->path(), 'users'))
+    Users
+    @elseif(str_starts_with(request()->path(), 'tickets'))
+    My Tickets
+    @elseif(str_starts_with(request()->path(), 'logs'))
+    Logs
+    @elseif(str_starts_with(request()->path(), 'assignedtickets'))
+    Assigned Tickets
     @else
-        Helpdesk Management System
+    Helpdesk Management System
     @endif
   </title>
   {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert@2"></script> --}}
@@ -40,6 +44,21 @@
     .pagination .page-item:not(:last-child) .page-link {
         margin-right: 0.5rem; /* Add some spacing between pagination links */
     }
+
+    .btnedit{
+      display: inline-block;
+      font-weight: 400;
+      color: #1F1F1F;
+      text-align: center;
+      vertical-align: middle;
+      user-select: none;
+      background-color: transparent;
+      border: 1px solid transparent;
+      font-size: 0.875rem;
+      line-height: 1;k 
+      border-radius: 0.1875rem;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
   </style>
 </head>
 
@@ -58,6 +77,7 @@
       @yield('container-fluid')
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="{{ asset('assets/libs/jquery/dist/jquery.min.js') }}"></script>
   <script src="{{ asset('assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>

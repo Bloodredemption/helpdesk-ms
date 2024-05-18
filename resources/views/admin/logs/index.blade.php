@@ -2,6 +2,23 @@
 
 @section('container-fluid')
     <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="card-title fw-semibold mb-0">Logs</h5>
+            
+            {{-- <div class="d-inline-flex">
+                <div class="dropdown me-2">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="downloadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="ti ti-download"></i> Download as
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="downloadDropdown">
+                        <li><a class="dropdown-item" href="/download-pdf"><i class="ti ti-file-text"></i> PDF</a></li>
+                        <li><a class="dropdown-item" href="/download-pdf"><i class="ti ti-file-text"></i> Excel</a></li>
+                        <li><a class="dropdown-item" href="/download-pdf"><i class="ti ti-file-text"></i> Word Document</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="btn btn-primary me-2"><i class="ti ti-printer"></i> Print</a>
+            </div> --}}
+        </div>
         
         @if(session('success'))
             <div class="alert alert-success mb-2" role="alert">
@@ -11,188 +28,100 @@
 
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-2">Logs</h5>
-                
-                <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDepartmentModal">Add New Ticket</button> -->
-                <div class="table-responsive mt-4">
-                    <table class="table rounded">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-auto mb-3">
+                        <h5 class="card-title fw-semibold mb-0"></h5>
+                        {{-- <a class="btn btn-primary" href="{{ route('departments.create') }}">Add New Department</a> --}}
+                    </div>
+                    <div class="col-auto mb-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-transparent border-0 text-muted">Filter</span>
+                            </div>
+                            <input type="text" class="form-control form-control-srch" id="userFilter" placeholder="Search ...">
+                            <div class="input-group-append">
+                                <a href="#" class="btn btn-outline-primary" id="filterButton"><i class="ti ti-search"></i></a>
+                            </div>
+                            <div class="input-group-append" style="display: none;" id="clearButtonWrapper">
+                                <a href="#" class="btn btn-outline-danger" id="clearButton"><i class="ti ti-x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="table-responsive mt-2">
+                    <table id="example" class="table rounded">
                         <thead class="bg-primary text-white rounded-top">
                             <tr>
-                                <th scope="col">Log No.</th>
-                                <th scope="col">Activity Description</th>
+                                {{-- <th scope="col">Log No.</th> --}}
+                                <th scope="col">Activity</th>
+                                <th scope="col">User</th>
                                 <th scope="col">Date</th>
-                                <th scope="col">Created At</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
-                            <tr>
-                                <td colspan="7" class="text-center">No data found</td>
+                            <tr id="noDataFoundRow" style="display: none">
+                                <td colspan="3" class="text-center">No data found</td>
                             </tr>
+                            @forelse($logs as $log)
+                            <tr>
+                                <td><b>{{ $log->activity_desc }}</b></td>
+                                <td>{{ $log->user->name }}</td>
+                                <td>{{ $log->created_at->format('F j, Y | h:i A') }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center">No data found.</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
+                    {{ $logs->links() }}
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Add Department Modal -->
-    <div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addDepartmentModalLabel">Add New User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('users.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" aria-describedby="textHelp" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="sex" class="form-label">Sex</label>
-                            <select class="form-select" id="sex" name="sex" aria-describedby="selectHelp" required>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="userType" class="form-label">User Type</label>
-                            <select class="form-select" id="userType" name="userType" aria-describedby="selectHelp" required>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" required>
-                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password_confirmation" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                        </div>
-                        <!-- Add more input fields if needed -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                </form>
-                 
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Department Modal -->
-    <div class="modal fade" id="editDepartmentModal" tabindex="-1" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editDepartmentModalLabel">Edit User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="editDepartmentForm" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <input type="text" class="form-control" id="user_id" name="user_id" hidden>
-
-                        <div class="mb-3">
-                            <label for="userName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="userName" name="userName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="userSex" class="form-label">Sex</label>
-                            <select class="form-select" id="userSex" name="userSex" aria-describedby="selectHelp" required>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="userType" class="form-label">User Type</label>
-                            <select class="form-select" id="userType" name="usertype" aria-describedby="selectHelp" required>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="userEmail" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" required>
-                            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-                        </div>
-                        <div class="mb-4">
-                            <label for="userPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="userPassword" name="userPassword" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="saveChangesBtn">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- <script>
-        var userID; // Define deptID as a global variable
-        $(document).ready(function () {
-            $('.edit-department').on('click', function () {
-            var userId = $(this).data('user-id');
-            var userName = $(this).data('user-name');
-            var userSex = $(this).data('user-sex');
-            var userEmail = $(this).data('user-email');
-            var userType = $(this).data('user-type');
-            userId = userID; // Assign value to the global variable userId
-            $('#userName').val(userName);
-            $('#userSex').val(userSex);
-            $('#userEmail').val(userEmail);
-            $('#usertype').val(userType);
-            $('#user_id').val(userId);
-        });
-
-            $('#editDepartmentForm').submit(function(e) {
-                e.preventDefault();
-                
-                var formData = $(this).serialize();
-                console.log(formData);
-
-                $.ajax({
-                    url: "/updateusers",
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        // Handle success response
-                        console.log(response);
-                        // Show SweetAlert notification
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: response.message, // Assuming the response contains a message key
-                            showConfirmButton: false,
-                            timer: 1500 // Display the notification for 1.5 seconds
-                        }).then(() => {
-                            // Reload the page
-                            window.location.reload();
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle error response
-                        console.error(xhr.responseText);
-                    }
-                });
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#filterButton').on('click', function() {
+                var filterValue = $('#userFilter').val().toLowerCase();
+                var rows = $('#example tbody tr');
+                var noDataFoundRow = $('#noDataFoundRow');
+    
+                rows.hide(); // Hide all rows initially
+    
+                rows.filter(function() {
+                    return $(this).text().toLowerCase().indexOf(filterValue) > -1;
+                }).show();
+    
+                if ($('#example tbody tr:visible').length === 0) {
+                    noDataFoundRow.show(); // Show "No data found" row if no rows match filter
+                } else {
+                    noDataFoundRow.hide(); // Hide "No data found" row if there are matching rows
+                }
+    
+                $('#clearButtonWrapper').show(); // Show the clear button wrapper
+            });
+    
+            $('#clearButton').on('click', function() {
+                $('#userFilter').val(''); // Clear the filter input
+                $('#example tbody tr').show(); // Show all table rows
+                $('#noDataFoundRow').hide(); // Hide "No data found" row
+                $('#clearButtonWrapper').hide(); // Hide the clear button wrapper
+            });
+    
+            // Show or hide clear button based on filter input value
+            $('#userFilter').on('input', function() {
+                var filterValue = $(this).val();
+                if (filterValue.trim() !== '') {
+                    $('#clearButtonWrapper').show();
+                } else {
+                    $('#clearButtonWrapper').hide();
+                }
             });
         });
-    </script> -->
+    </script>
     
 @endsection

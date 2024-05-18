@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\Logs;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class DepartmentController extends Controller
 {
@@ -12,26 +17,16 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::paginate(10);
+        $departments = Department::where('status', 1)->paginate(10);
         return view('admin.departments.index', ['departments' => $departments]);
     }
 
-    public function getDepartmentName($id)
-    {
-        $department = Department::find($id);
-        if ($department) {
-            return response()->json(['name' => $department->name]);
-        } else {
-            return response()->json(['error' => 'Department not found'], 404);
-        }
-    }
-    
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('admin.departments.create');
     }
 
     /**
@@ -45,66 +40,72 @@ class DepartmentController extends Controller
             // Add more validation rules if needed
         ]);
 
-        // Create a new department
-        Department::create([
-            'name' => $request->departmentName,
-            // Add more fields as needed
+
+        $department = new Department();
+        $department->name = $request->input('departmentName');
+        $department->save();
+
+        Logs::create([
+            'activity_desc' => 'Created department: ' . $department->name,
+            'user_id' => Auth::id(),
         ]);
 
         // Redirect back with success message
-        return redirect()->back()->with('success', 'Department added successfully.');
+        return redirect()->route('departments.index')->with('success', 'Department added successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Department $department)
+    public function show(Department $department): View
     {
-        $desiredId = $department->id;
-        return view('admin.departments.index')->with('desiredId', $desiredId);
+        return view('admin.departments.view', compact('department'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Department $department)
+    public function edit(Department $department): View
     {
-        //
+        return view('admin.departments.edit', compact('department'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, Department $department)
     {
         $request->validate([
-            'departmentNameInput' => 'required|string|max:255',
+            'departmentName' => 'required|string|max:255',
             // Add validation rules for other fields if needed
         ]);
 
-        $department = Department::where('id', $request->dept_id)->first();
+        $department->name =  $request->input('departmentName');
+        $department->save();
 
-        if ($department) {
-            $department->name = $request->departmentNameInput;
-            $department->save();
-            return response()->json(['message' => 'Department updated successfully'], 200);
-        }else{
-            return response()->json(['message' => 'Data not found'], 404);
-        }
 
-        // $department->update([
-        //     'name' => $request->departmentName,
-        //     // Update other fields here
-        // ]);
+        Logs::create([
+            'activity_desc' => 'Updated department: ' . $department->name,
+            'user_id' => Auth::id(),
+        ]);
 
-        // return redirect()->back()->with('success', 'Department updated successfully.');
+        return redirect()->route('departments.index')
+                        ->with('success', 'Department updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Department $department)
+    public function destroy(Department $department): RedirectResponse
     {
-        //
+        $department->status = '0';
+        $department->save();
+
+        Logs::create([
+            'activity_desc' => 'Removed department: ' . $department->name,
+            'user_id' => Auth::id(),
+        ]);
+
+        return redirect()->route('departments.index')->with('success','Department removed successfully.');
     }
 }

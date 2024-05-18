@@ -3,9 +3,9 @@
 @section('container-fluid')
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <h5 class="card-title fw-semibold mb-0">Ticket List</h5>
+            <h5 class="card-title fw-semibold mb-0">Assigned Tickets</h5>
             
-            <div class="d-inline-flex">
+            {{-- <div class="d-inline-flex">
                 <div class="dropdown me-2">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="downloadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="ti ti-download"></i> Download as
@@ -17,20 +17,20 @@
                     </ul>
                 </div>
                 <a href="#" class="btn btn-primary me-2"><i class="ti ti-printer"></i> Print</a>
-            </div>
+            </div> --}}
         </div>
 
-        @if(session('success'))
+        {{-- @if(session('success'))
             <div class="alert alert-success mb-2" role="alert">
                 {{ session('success') }}
             </div>
-        @endif
+        @endif --}}
 
         <div class="card">
             <div class="card-body">
                 <div class="row align-items-center justify-content-between">
                     <div class="col-auto mb-3">
-                        <a class="btn btn-primary" href="{{ route('tickets.create') }}">Add New Ticket</a>
+                        {{-- <a class="btn btn-primary" href="{{ route('tickets.create') }}">Add New Ticket</a> --}}
                     </div>
                     <div class="col-auto mb-3">
                         <div class="input-group">
@@ -56,9 +56,8 @@
                                 <th scope="col">Description</th>
                                 <th scope="col">Priority Level</th>
                                 <th scope="col">Issued by</th>
-                                <th scope="col">Assigned to</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Action</th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -68,7 +67,7 @@
                             @forelse($tickets as $ticket)
                             <tr>
                                 <td>
-                                    <a href="{{ route('tickets.show', $ticket->id) }}" class="edit-department text-info">
+                                    <a href="{{ route('assigned-tickets.show', $ticket->id) }}" class="edit-department text-info">
                                         <b>{{ $ticket->ticket_no }}</b>
                                     </a>
                                 </td>
@@ -76,14 +75,7 @@
                                 <td>{{ $ticket->description }}</td>
                                 <td>{{ $ticket->prioritylevel }}</td>
                                 <td>
-                                    <a href="{{ route('users.show', $ticket->user_id) }}" class="edit-department text-info">
-                                        <b>{{ $ticket->assignedUser->name }}</b>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="{{ route('users.show', $ticket->temp_user) }}" class="edit-department text-info">
-                                        <b>{{ $ticket->temporaryUser->name }}</b>
-                                    </a>
+                                    <b>{{ $ticket->assignedUser->name }}</b>
                                 </td>
                                 <td>
                                     @if($ticket->status == 'Resolved')
@@ -98,9 +90,9 @@
                                         <div class="d-flex align-items-center gap-2">
                                             <span class="badge bg-primary rounded-3 fw-semibold">New</span>
                                         </div>
-                                    @elseif($ticket->status == 'Canceled')
+                                    @elseif($ticket->status == 'Cancelled')
                                         <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-warning rounded-3 fw-semibold">Canceled</span>
+                                            <span class="badge bg-danger rounded-3 fw-semibold">Canceled</span>
                                         </div>
                                     @elseif($ticket->status == 'In-Progress')
                                         <div class="d-flex align-items-center gap-2">
@@ -113,9 +105,39 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a title="Edit" href="{{ route('tickets.edit', $ticket->id) }}" class="edit-department">
-                                        <i class="ti ti-edit"></i> Edit
-                                    </a>
+                                    <div class="d-inline-flex">
+                                        <div class="dropdown me-2">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" id="downloadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="downloadDropdown">
+                                                <li>
+                                                    <form action="{{ route('ticket.start', $ticket) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="dropdown-item"><i class="ti ti-file-text"></i> Start</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('ticket.cancel', $ticket) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="dropdown-item"><i class="ti ti-file-text"></i> Cancel</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('ticket.pause', $ticket) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="dropdown-item"><i class="ti ti-file-text"></i> Pause</button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form action="{{ route('ticket.resolve', $ticket) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="dropdown-item"><i class="ti ti-file-text"></i> Resolved</button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                             @empty
@@ -132,6 +154,27 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(session('success'))
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        Toast.fire({
+            icon: "success",
+            title: "{{ session('success') }}"
+        });
+    </script>
+    @endif
     <script>
         $(document).ready(function() {
             $('#filterButton').on('click', function() {

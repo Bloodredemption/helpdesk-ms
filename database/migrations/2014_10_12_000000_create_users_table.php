@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('sex')->nullable();
-            $table->string('usertype')->default('user');
+            $table->string('usertype')->default('User');
             $table->string('email')->unique();
             $table->string('password');
             $table->string('status')->default(1);
             $table->timestamp('email_verified_at')->nullable();
             $table->foreignId('dept_id')->nullable()->constrained('departments')->onDelete('cascade');
+            $table->string('position')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

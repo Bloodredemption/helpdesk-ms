@@ -30,6 +30,11 @@
                     {{$errors->first()}}
                   </div>
                 @endif
+                @if ($message = Session::get('success'))
+                  <div class="alert alert-success" role="alert">
+                      <p>{{ $message }}</p>
+                  </div>
+                @endif
                 <form action="{{ route('login') }}" method="POST">
                   @csrf <!-- Add CSRF token for security -->
                   <div class="mb-3">
