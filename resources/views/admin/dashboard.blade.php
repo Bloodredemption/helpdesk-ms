@@ -92,11 +92,11 @@
                                 </td>
                                 <td class="border-bottom-0">
                                     <h6 class="fw-semibold mb-1">{{ $assignedTicket->assignedBy->name }}</h6>
-                                    <span class="fw-normal">{{ $assignedTicket->dept->name }} | {{ $assignedTicket->assignedBy->position }}</span>
+                                    <span class="fw-normal">{{ $assignedTicket->assignedBy->position }}</span>
                                 </td>
                                 <td class="border-bottom-0">
                                     <h6 class="fw-semibold mb-1">{{ $assignedTicket->assignedTo->name }}</h6>
-                                    <span class="fw-normal">{{ $assignedTicket->dept->name }} | {{ $assignedTicket->assignedTo->position }}</span>
+                                    <span class="fw-normal">{{ $assignedTicket->assignedTo->position }}</span>
                                 </td>
                                 <td class="border-bottom-0">
                                   <div class="d-flex align-items-center gap-2">
