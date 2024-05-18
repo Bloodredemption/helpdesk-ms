@@ -16,7 +16,8 @@ class AssignedTicketController extends Controller
     {
         $assignedTickets = AssignedTicket::with(['assignedBy', 'assignedTo', 'ticket'])->paginate(5);
         $departments = Department::all()->keyBy('id');
-        $users = User::where('usertype', 'User')->get();
+        // $users = User::where('usertype', 'User')->get();
+        $users = User::all();
         $totalUsers = $users->count();
         $totalDepartments = $departments->count();
         return view('admin.dashboard', ['assignedTickets' => $assignedTickets, 'departments' => $departments, 'totalDepartments' => $totalDepartments, 'totalUsers' => $totalUsers]);
